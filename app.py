@@ -67,13 +67,23 @@ def log_interaction(user_input, result):
     except FileNotFoundError:
         logs = []
 
+    # Determine tag
+    if user_input.startswith("/simulate"):
+        tag = "simulation"
+    elif any(vuln["name"].lower() in user_input.lower() for vuln in knowledge_base):
+        tag = "vulnerability"
+    else:
+        tag = "unknown"
+
     logs.append({
         "query": user_input,
-        "response": result
+        "response": result,
+        "tag": tag
     })
 
     with open("log.json", "w") as log_file:
         json.dump(logs, log_file, indent=2)
+
 
 # 🧠 Main query input
 user_query = st.text_input("Type your question or a /simulate command:")
@@ -95,3 +105,29 @@ if user_query:
     # Output + log
     st.markdown(response)
     log_interaction(user_query, response)
+
+st.markdown("---")
+st.subheader("📊 Query Log Viewer")
+
+# Load and display the logs
+try:
+    with open("log.json", "r") as file:
+        logs = json.load(file)
+except FileNotFoundError:
+    logs = []
+
+# Optional filter
+tag_filter = st.selectbox("Filter by tag", options=["all", "simulation", "vulnerability", "unknown"])
+
+if tag_filter != "all":
+    logs = [log for log in logs if log["tag"] == tag_filter]
+
+# Display logs
+for log in reversed(logs):  # latest first
+    st.markdown(f"""
+**🗨️ Query:** `{log['query']}`  
+**🏷️ Tag:** `{log['tag']}`  
+**📤 Response:**  
+{log['response']}
+---
+""")
