@@ -1,0 +1,14 @@
+[
+    {
+        "name": "SQL Injection",
+        "description": "SQLi occurs when untrusted input is inserted into a SQL query without proper sanitization, allowing attackers to manipulate queries.",
+        "prevention": "Use prepared statements, parameterized queries, and input validation.",
+        "simulation": "Imagine a login form where you enter `' OR '1'='1` as a username. The server might run: `SELECT * FROM users WHERE username = '' OR '1'='1'`, which returns all users and bypasses authentication."
+    },
+    {
+        "name": "Cross-Site Scripting",
+        "description": "XSS allows attackers to inject malicious scripts into web pages viewed by other users.",
+        "prevention": "Escape user input, use Content Security Policy (CSP), and validate input.",
+        "simulation": "An attacker posts `<script>alert('Hacked!')</script>` in a comment box. When another user views the page, the script runs in their browser, stealing session cookies."
+    }
+]
