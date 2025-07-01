@@ -38,4 +38,44 @@ if user_query:
     else:
         response = find_answer(user_query)
 
+
+    # 📝 Log user query and response to log.json
+    def log_interaction(user_input, result):
+        try:
+            with open("log.json", "r") as log_file:
+                logs = json.load(log_file)
+        except FileNotFoundError:
+            logs = []
+
+        logs.append({
+            "query": user_input,
+            "response": result
+        })
+
+        with open("log.json", "w") as log_file:
+            json.dump(logs, log_file, indent=2)
+
+
+    # Log after generating the response
+    log_interaction(user_query, response)
     st.markdown(response)
+
+def find_answer(query):
+    for vuln in knowledge_base:
+        if vuln["name"].lower() in query.lower():
+            # Format prevention as bullet points if it's a list
+            if isinstance(vuln["prevention"], list):
+                prevention_bullets = "\n".join([f"- {item}" for item in vuln["prevention"]])
+            else:
+                prevention_bullets = vuln["prevention"]  # fallback for string
+
+            return f"""### 🧠 {vuln['name']}
+
+📌 **Description**  
+{vuln['description']}
+
+🛡️ **Prevention**
+{prevention_bullets}
+"""
+    return "⚠️ Sorry, I don't know about that vulnerability."
+
