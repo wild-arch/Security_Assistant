@@ -34,9 +34,11 @@ knowledge_base = load_knowledge()
 
 # 🔍 Answer from local knowledge base
 def find_answer(query):
+    query_lower = query.lower()
     for vuln in knowledge_base:
-        if vuln["name"].lower() in query.lower():
-            # Format prevention bullets
+        # Match on name or keyword list
+        if vuln["name"].lower() in query_lower or any(k in query_lower for k in vuln.get("keywords", [])):
+            # Format bullets
             if isinstance(vuln["prevention"], list):
                 prevention_bullets = "\n".join([f"- {item}" for item in vuln["prevention"]])
             else:
@@ -51,6 +53,7 @@ def find_answer(query):
 {prevention_bullets}
 """
     return "⚠️ Sorry, I don't know about that vulnerability."
+
 
 # 🎭 Simulation output
 def simulate_vulnerability(query):
@@ -126,7 +129,7 @@ if tag_filter != "all":
 for log in reversed(logs):  # latest first
     st.markdown(f"""
 **🗨️ Query:** `{log['query']}`  
-**🏷️ Tag:** `{log['tag']}`  
+**🏷️ Tag:** `{log.get('tag', 'not-tagged')}` 
 **📤 Response:**  
 {log['response']}
 ---

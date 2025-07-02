@@ -1,0 +1,4 @@
+git clone https://github.com/wild-arch/SecureAssistant.git
+cd SecureAssistant
+pip install -r requirements.txt
+streamlit run app.py

@@ -1,6 +1,7 @@
 [
     {
         "name": "SQL Injection",
+        "keywords": ["sqli", "sql injection", "SQL injection", "SQLI"],
         "description": "SQL Injection (SQLi) occurs when attackers inject malicious SQL statements into application input fields, tricking the database into executing unintended commands. This allows unauthorized data access, modification, or deletion. SQLi exploits vulnerabilities in database query construction where user input isn't properly sanitized or parameterized.",
         "prevention": [
             "Use parameterized queries (prepared statements) with bound parameters",
@@ -15,6 +16,7 @@
     },
     {
         "name": "Cross-Site Scripting (XSS)",
+        "keywords": ["xss", "cross-site scripting", "cross site scripting", "reflected xss"],
         "description": "XSS occurs when attackers inject malicious client-side scripts into web pages viewed by other users. The browser executes these scripts in the victim's context, enabling session hijacking, defacement, or malware distribution. There are three primary types: Stored (persistent), Reflected (non-persistent), and DOM-based XSS.",
         "prevention": [
             "Context-sensitive output encoding (HTML, JavaScript, CSS, URL)",
@@ -29,6 +31,7 @@
     },
     {
         "name": "Cross-Site Request Forgery (CSRF)",
+        "keywords": ["csrf", "cross-site request forgery", "cross site forgery", "reflected csrf"],
         "description": "CSRF forces authenticated users to submit unintended requests to a vulnerable web application. Attackers craft malicious links or forms that exploit the browser's automatic cookie sending, enabling state-changing actions (e.g., fund transfers) without the user's consent. Effective when users are logged into the target site.",
         "prevention": [
             "Implement anti-CSRF tokens (synchronizer token pattern)",
@@ -42,6 +45,7 @@
     },
     {
         "name": "Insecure Direct Object Reference (IDOR)",
+        "keywords": ["idor", "insecure direct object reference", "IDOR", "reflected idor"],
         "description": "IDOR occurs when applications expose internal implementation objects (e.g., database keys, filenames) without proper access controls. Attackers manipulate references (e.g., URL parameters) to access unauthorized resources by predicting or enumerating identifiers.",
         "prevention": [
             "Implement access control checks for every direct object reference",
@@ -56,6 +60,7 @@
     },
     {
         "name": "Server-Side Request Forgery (SSRF)",
+        "keywords": ["ssrf", "server-side request forgery", "server side request forgery", "reflected ssrf"],
         "description": "SSRF tricks servers into making unauthorized requests to internal resources or external systems. Attackers exploit vulnerable URL handling features to access cloud metadata, internal networks, or restricted services. Critical in cloud environments where metadata APIs expose credentials.",
         "prevention": [
             "Sanitize and validate all user-supplied URLs",
