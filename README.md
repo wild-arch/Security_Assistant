@@ -31,7 +31,7 @@
 - `vulnerabilities.json` – Your cybersecurity knowledge base
 - `log.json` – All interactions and tags stored here
 - `patch_logs.py` – Retroactively tags previous logs if needed
-- `requirements.txt` – Minimal dependencies (no paid APIs)
+- `requirements.txt` – Minimal dependencies 
 
 ---
 
@@ -44,8 +44,8 @@
 - A simple, responsive UI using Streamlit
 
 ### What I learned:
-- How to build RAG systems using LangChain and FAISS — without OpenAI
-- Using free HuggingFace embeddings for semantic document search
+- How to build RAG systems using LangChain and FAISS 
+- Using HuggingFace embeddings for semantic document search
 - Structuring and querying local knowledge bases
 - Creating educational simulations of security attacks
 - Implementing local logging and dashboard-style query review
@@ -61,7 +61,7 @@
 ## ✅ How to Run Locally
 
 ```bash
-git clone https://github.com/yourusername/SecureAssistant.git
+git clone https://github.com/wild-arch/Security_Assistant
 cd SecureAssistant
 pip install -r requirements.txt
 streamlit run app.py
