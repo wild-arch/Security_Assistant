@@ -1,39 +1,67 @@
 # 🛡️ SecureAssistant – AI Cybersecurity Helper
 
-SecureAssistant is a simple, educational AI assistant that explains and simulates common web security vulnerabilities. Built with Python, Streamlit, and optional LangChain/OpenAI integration, it helps developers and students understand threats like SQL Injection, XSS, CSRF, and more.
+**SecureAssistant** is a lightweight AI assistant that explains and simulates common web security vulnerabilities. Built using **Python**, **Streamlit**, and **LangChain** with free local components, it helps developers and students understand threats like **SQL Injection**, **XSS**, **CSRF**, and more — without needing API access or cloud credits.
 
 ---
 
 ## 🚀 Features
 
 - 💬 Ask questions about known vulnerabilities (e.g. "What is SQL Injection?")
-- ⚔️ Run `/simulate xss`, `/simulate sqli`, etc. to see how attacks work
-- 🧠 Uses a JSON-based knowledge base (no need for constant API access)
-- 📝 Logs all user queries, responses, and tags (`log.json`)
-- 📊 Built-in query log viewer with filtering by tag (simulation, vulnerability, unknown)
-- 🔧 Optional LangChain + OpenAI for fallback when local data is unavailable
+- ⚔️ Run `/simulate xss`, `/simulate sqli`, etc. to see how attacks might work
+- 🧠 Uses a local JSON knowledge base + FAISS vector search for fast retrieval
+- 📝 Logs all user queries, responses, and tags to `log.json`
+- 📊 Built-in query log viewer with tag filtering (`simulation`, `vulnerability`, `unknown`)
+- 🔍 Uses HuggingFace embeddings (`all-MiniLM-L6-v2`) for free semantic search
 
 ---
 
-🛡️ Security-Aware AI Assistant – Final Reflection  
-Over the past 5 days, I built a lightweight AI assistant capable of answering questions about common web security vulnerabilities and simulating how these attacks might work. The assistant runs locally with a Streamlit interface and is powered by a JSON-based knowledge base and optional OpenAI + LangChain integration.
+## 🛠️ Tech Stack
+
+- **LangChain** for RAG (Retrieval-Augmented Generation)
+- **FAISS** for local vector storage and retrieval
+- **HuggingFace Embeddings** for free, local embeddings
+- **Streamlit** for the interactive web UI
+- **JSON** for structured knowledge base and logs
+
+---
+
+## 📁 File Overview
+
+- `app.py` – Main Streamlit app
+- `vulnerabilities.json` – Your cybersecurity knowledge base
+- `log.json` – All interactions and tags stored here
+- `patch_logs.py` – Retroactively tags previous logs if needed
+- `requirements.txt` – Minimal dependencies (no paid APIs)
+
+---
+
+## 🧠 Final Reflection
 
 ### What I built:
-- A question-answering assistant focused on web vulnerabilities (SQLi, XSS, CSRF, etc.)
-- A simulation feature using /simulate [vulnerability]
-- A local log system (log.json) that stores all user queries, responses, and tags
-- A web interface to interact with the assistant and view query history
+- A question-answering cybersecurity assistant focused on common web vulnerabilities
+- A simulation feature (`/simulate`) to demonstrate how attacks might work
+- A logging system with tagging for each interaction
+- A simple, responsive UI using Streamlit
 
 ### What I learned:
-- Practical use of Streamlit for creating simple interactive dashboards
-- Structuring knowledge in a JSON file for fast access and formatting
-- Using LangChain to augment an assistant with LLMs (even though API limits stopped this)
-- Implementing a simple but useful logging and visualization pipeline
-- How to simulate security attacks in an educational and safe format
+- How to build RAG systems using LangChain and FAISS — without OpenAI
+- Using free HuggingFace embeddings for semantic document search
+- Structuring and querying local knowledge bases
+- Creating educational simulations of security attacks
+- Implementing local logging and dashboard-style query review
 
 ### What I’d improve:
-- Add semantic search for more flexible question matching
-- Integrate vector store (e.g. FAISS) for better long-term memory
-- Improve the UI/UX and limit or collapse the query viewer
-- Fully deploy the app using Render or Hugging Face Spaces
+- Replace text-only responses with code snippets or diagrams
+- Improve UI for better clarity (collapse logs, add icons, search bar)
+- Add full deployment (Render, HuggingFace Spaces)
+- Add feedback system or user ratings for answers
 
+---
+
+## ✅ How to Run Locally
+
+```bash
+git clone https://github.com/yourusername/SecureAssistant.git
+cd SecureAssistant
+pip install -r requirements.txt
+streamlit run app.py
