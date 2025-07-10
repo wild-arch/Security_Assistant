@@ -13,6 +13,7 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.docstore.document import Document
 from langchain.chains import RetrievalQA
 
+
 # 🎯 Streamlit UI
 st.title("🛡️ Security-Aware AI Assistant ")
 st.write("Ask me about common web vulnerabilities, or try `/simulate xss`.")
@@ -43,7 +44,7 @@ Prevention: {vuln['prevention']}"""
 
 vectorstore = load_vectorstore()
 
-# 🧠 Simple Retrieval (Without LLM)
+# 🧠 Simple Retrieval
 def simple_rag(query):
     docs = vectorstore.similarity_search(query, k=2)
     if not docs:
