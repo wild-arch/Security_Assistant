@@ -58,12 +58,23 @@ def simple_rag(query):
 
 # 🎭 Simulate vulnerabilities
 def simulate_vulnerability(query):
+    query_lower = query.lower()
     for vuln in knowledge_base:
-        name_lower = vuln["name"].lower()
-        name_short = name_lower.split("(")[0].strip()
-        if name_lower in query.lower() or name_short in query.lower():
-            return f"🚨 **Simulating {vuln['name']} Attack:**\n\n{vuln['simulation']}"
-    return "⚠️ I don't have a simulation for that vulnerability."
+        # Check both the name and the keywords
+        if vuln["name"].lower() in query_lower or any(k.lower() in query_lower for k in vuln.get("keywords", [])):
+            return f"""
+<div style="background-color:#1f1f1f; padding:15px; border-radius:10px; color:#f2f2f2;">
+<h4>🚨 Simulating {vuln['name']} Attack</h4>
+<p>{vuln['simulation']}</p>
+</div>
+"""
+    return """
+<div style="background-color:#1f1f1f; padding:15px; border-radius:10px; color:#ffdddd;">
+⚠️ I don't have a simulation for that vulnerability.
+</div>
+"""
+
+
 
 # 📝 Logging
 def log_interaction(user_input, result):
@@ -106,7 +117,7 @@ if user_query:
     if "🚨" in response:
         st.markdown(f"<div style='background-color:#ffebeb;padding:10px;border-radius:10px'>{response}</div>", unsafe_allow_html=True)
     else:
-        st.markdown(response)
+        st.markdown(response, unsafe_allow_html=True)
 
     log_interaction(user_query, response)
 
