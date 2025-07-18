@@ -1,6 +1,7 @@
 import streamlit as st
 import json
 import os
+
 from dotenv import load_dotenv
 
 # 🧪 Load environment variables (optional if needed)
@@ -12,18 +13,47 @@ from langchain.vectorstores import FAISS
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.docstore.document import Document
 from langchain.chains import RetrievalQA
+from langchain.llms import HuggingFaceHub
+from langchain_core.prompts import ChatPromptTemplate
+from langchain_ollama.llms import OllamaLLM
 
+import vectorstore
+
+# llm = HuggingFaceHub(repo_id="google/flan-t5-base", model_kwargs={"temperature": 0.3}, huggingfacehub_api_token=os.getenv("HUGGINGFACEHUB_API_TOKEN"))
+
+llm = OllamaLLM(model="llama3.2:1b")
+
+template = """
+You are a smart cybersecurity professional,.
+
+Your task is to:
+1. Analyze the user's question 
+2. Explain your reasoning step-by-step
+
+Only answer questions that are related to cybersecurity vulnerabilities, if the question is unrelated, respond "The question provided is outside my scope"
+You are only to use the provided context
+Question: {question}
+
+You will be provided with a context to help answer the question: {context}
+"""
+
+prompt = ChatPromptTemplate.from_template(template)
+
+chain = prompt | llm
 
 # 🎯 Streamlit UI
 st.title("🛡️ Security-Aware AI Assistant ")
 st.write("Ask me about common web vulnerabilities, or try `/simulate xss`.")
+
 
 # 📚 Load vulnerabilities
 def load_knowledge():
     with open("vulnerabilities.json", "r") as file:
         return json.load(file)
 
+
 knowledge_base = load_knowledge()
+
 
 # 🧠 Vector Store Setup
 @st.cache_resource
@@ -42,7 +72,16 @@ Prevention: {vuln['prevention']}"""
     vectorstore = FAISS.from_documents(chunks, embeddings)
     return vectorstore
 
+
 vectorstore = load_vectorstore()
+
+qa_chain = RetrievalQA.from_chain_type(
+    llm=llm,
+    retriever=vectorstore.as_retriever(),
+    return_source_documents=True  # optional
+
+)
+
 
 # 🧠 Simple Retrieval
 def simple_rag(query):
@@ -54,7 +93,12 @@ def simple_rag(query):
         name = doc.metadata.get("source", f"Result {i}")
         content = doc.page_content
         response += f"**Chunk {i}:**\n{doc.page_content}\n\n"
-    return response
+    _response=chain.invoke({"question": query,"context":response})
+    print(_response)
+
+
+    return _response
+
 
 # 🎭 Simulate vulnerabilities
 def simulate_vulnerability(query):
@@ -73,7 +117,6 @@ def simulate_vulnerability(query):
 ⚠️ I don't have a simulation for that vulnerability.
 </div>
 """
-
 
 
 # 📝 Logging
@@ -104,6 +147,7 @@ def log_interaction(user_input, result):
     with open("log.json", "w") as log_file:
         json.dump(logs, log_file, indent=2)
 
+
 # 🧠 Main interaction
 user_query = st.text_input("Type your question or a /simulate command:")
 
@@ -115,7 +159,8 @@ if user_query:
         response = simple_rag(user_query)
 
     if "🚨" in response:
-        st.markdown(f"<div style='background-color:#ffebeb;padding:10px;border-radius:10px'>{response}</div>", unsafe_allow_html=True)
+        st.markdown(f"<div style='background-color:#ffebeb;padding:10px;border-radius:10px'>{response}</div>",
+                    unsafe_allow_html=True)
     else:
         st.markdown(response, unsafe_allow_html=True)
 
