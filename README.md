@@ -67,3 +67,4 @@ pip install -r requirements.txt
 streamlit run app.py
 
 # As far as am concerned
+okay and okay
