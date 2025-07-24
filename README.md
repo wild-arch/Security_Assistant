@@ -65,3 +65,5 @@ git clone https://github.com/wild-arch/Security_Assistant
 cd SecureAssistant
 pip install -r requirements.txt
 streamlit run app.py
+
+# As far as am concerned
